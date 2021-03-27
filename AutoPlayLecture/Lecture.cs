@@ -10,7 +10,7 @@ namespace AutoPlayLecture
 {
     class Lecture
     {
-        private int lectureId = 0;
+        public int lectureId = 0;
         public int lecturepage = 0;
         public String name = "";
         public int maxProcessValue = 1;
@@ -76,7 +76,7 @@ namespace AutoPlayLecture
             driver.FindElement(By.XPath("/html/body/center/div[2]/div[4]/div/div[2]/div/div[5]/div[2]/div[3]/form/table/tbody[2]/tr[" + lectureId.ToString() + "]/td[5]/a/img")).Click();
             Thread.Sleep(1000);
             driver.FindElement(By.XPath("/html/body/center/div/div[4]/div/div[2]/div/div[5]/form[1]/div/div/div[2]/a[3]")).Click();
-            Thread.Sleep(200);
+            Thread.Sleep(300);
             var maxpro = driver.FindElement(By.XPath("/html/body/center/div/div[4]/div/div[2]/div/div[5]/div[5]/div/div[2]/div/div[3]")).Text;
             if (maxpro == "") { maxpro = "0/1(0%)"; }
             var maxprod = maxpro.Split('/')[1].Split('(')[0];

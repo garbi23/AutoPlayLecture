@@ -3,10 +3,12 @@ using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AutoPlayLecture
 {
@@ -14,7 +16,7 @@ namespace AutoPlayLecture
     {
         private int maxPage = 0;
         public ArrayList lectureList = new ArrayList();
-        private int groupId = 0;
+        public int groupId = 0;
         private Form1 form = null;
         public String name = "";
         public IWebDriver driver;
@@ -129,6 +131,11 @@ namespace AutoPlayLecture
                 form.logAdd("강의 리스트 "+ listpage + " 실행");
                 for (int i = 1; i < 11; i++)
                 {
+                    if (Program.endLecList.Contains(groupId + " " + listpage + " " + i))
+                    {
+                        Console.WriteLine(groupId + " " + listpage + " " + i + " 이미 다 들은 강의");
+                        continue;
+                    }
                     var tr = "";
                     try
                     {
@@ -141,7 +148,12 @@ namespace AutoPlayLecture
                     var name = tr.Split(' ')[0];
                     if (!name.Contains("mp4")) continue;
                     var lecture = new Lecture(i, driver);
-                    if (lecture.getLectureStat()) continue;
+                    if (lecture.getLectureStat())
+                    {
+                        Console.WriteLine(groupId + " " + listpage + " " + i + " 이미 다 들은 강의 추가");
+                        Program.endLecList.Add(groupId + " " + listpage + " " + i);
+                        continue;
+                    }
                     lecture.lecturepage = listpage;
                     lectureList.Add(lecture);
                     form.logAdd(name + " | 강의 추가 완료");

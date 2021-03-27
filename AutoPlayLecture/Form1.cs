@@ -166,7 +166,19 @@ namespace AutoPlayLecture
                     logAdd(lec.name + ": 강의 시작");
                     while (true)
                     {
-                        if (lec.playLecture(driver)) { break; }
+                        if (lec.playLecture(driver)) {
+                            Program.endLecList.Remove(group.groupId + " " + lec.lecturepage + " " + lec.lectureId);
+                            File.WriteAllText(Program.path, String.Empty);
+                            using (StreamWriter outputFile = new StreamWriter(Program.path))
+                            {
+                                foreach (String str in Program.endLecList)
+                                {
+                                    outputFile.WriteLine(str);
+                                }
+                                outputFile.Close();
+                            }
+                            break; 
+                        }
                         this.Invoke(new MethodInvoker(delegate ()
                         {
                             progressBar3.Maximum = lec.maxProcessValue;
@@ -335,6 +347,15 @@ namespace AutoPlayLecture
                 listView1.EndUpdate();
             }));
             logAdd("리스트화 완료");
+            File.WriteAllText(Program.path, String.Empty);
+            using (StreamWriter outputFile = new StreamWriter(Program.path))
+            {
+                foreach (String str in Program.endLecList)
+                {
+                    outputFile.WriteLine(str);
+                }
+                outputFile.Close();
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -400,15 +421,30 @@ namespace AutoPlayLecture
                     thread.Abort();
                 }
             }
+
+            Thread endthread = new Thread(() => quitDriver());
+            endthread.IsBackground = true;
+            endthread.Start();
+        }
+
+        private void quitDriver()
+        {
+            label1.Text = "종료 하는중...";
+            progressBar3.Maximum = Program.driverList.Count;
+            progressBar3.Minimum = 0;
+            int value = 0;
             foreach (IWebDriver driver in Program.driverList)
             {
                 Console.WriteLine("드라이버 종료");
                 driver.Quit();
+                value++;
+                progressBar3.Value = value;
+                label2.Text = value + " / " + progressBar3.Maximum;
             }
             Process.GetCurrentProcess().Kill();
             Application.Exit();
-
         }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
