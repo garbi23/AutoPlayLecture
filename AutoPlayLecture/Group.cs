@@ -18,6 +18,8 @@ namespace AutoPlayLecture
         private Form1 form = null;
         public String name = "";
         private IWebDriver driver;
+        private int listpage = 1;
+        private IJavaScriptExecutor js = null;
         public Group(int groupId, Form1 form)
         {
             this.form = form;
@@ -29,6 +31,7 @@ namespace AutoPlayLecture
             Program.value += 10;
             driver = new ChromeDriver(service, options);
             driver.Url = Program.ieilmsurl;
+            js = (IJavaScriptExecutor)driver;
             Login();
         }
 
@@ -112,22 +115,38 @@ namespace AutoPlayLecture
             Thread.Sleep(2000);
             driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[5]/div[1]/table/thead/tr/th[2]/a/img")).Click();
             Thread.Sleep(2000);
-            for (int i = 1; i < 11; i++)
+            while (true)
             {
-                var tr = "";
                 try
                 {
-                    tr = driver.FindElement(By.XPath("/html/body/center/div[2]/div[4]/div/div[2]/div/div[5]/div[2]/div[3]/form/table/tbody[2]/tr[" + i + "]/td[5]/a/img")).GetAttribute("title");
+                    driver.FindElement(By.XPath("/html/body/center/div[2]/div[4]/div/div[2]/div/div[5]/div[2]/div[3]/form/table/tbody[2]/tr[1]/td[5]/a/img")).GetAttribute("title");
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     break;
                 }
-                var name = tr.Split(' ')[0];
-                if (!name.Contains("mp4")) continue;
-                var lecture = new Lecture(i, driver);
-                if (lecture.getLectureStat()) continue;
-                lectureList.Add(lecture);
-                form.logAdd(name + " | 강의 추가 완료");
+                form.logAdd("강의 리스트 "+ listpage + " 실행");
+                for (int i = 1; i < 11; i++)
+                {
+                    var tr = "";
+                    try
+                    {
+                        tr = driver.FindElement(By.XPath("/html/body/center/div[2]/div[4]/div/div[2]/div/div[5]/div[2]/div[3]/form/table/tbody[2]/tr[" + i + "]/td[5]/a/img")).GetAttribute("title");
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                    var name = tr.Split(' ')[0];
+                    if (!name.Contains("mp4")) continue;
+                    var lecture = new Lecture(i, driver);
+                    if (lecture.getLectureStat()) continue;
+                    lectureList.Add(lecture);
+                    form.logAdd(name + " | 강의 추가 완료");
+                }
+                listpage++;
+                js.ExecuteScript("javascript:data_load(0," + listpage + ",2,'reg_dt','desc');");
+                Thread.Sleep(3000);
             }
             form.logAdd(name + " | 강의 그룹 모든 강의 추가 완료!");
             form.groupSize--;
