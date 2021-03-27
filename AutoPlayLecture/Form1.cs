@@ -421,10 +421,7 @@ namespace AutoPlayLecture
                     thread.Abort();
                 }
             }
-
-            Thread endthread = new Thread(() => quitDriver());
-            endthread.IsBackground = true;
-            endthread.Start();
+            quitDriver();
         }
 
         private void quitDriver()
