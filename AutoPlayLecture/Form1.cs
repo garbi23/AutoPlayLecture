@@ -283,22 +283,25 @@ namespace AutoPlayLecture
             Console.WriteLine(groupCount.ToString());
 
             logAdd("강의 그룹 가져오기");
-            for (int i = 2; i < groupCount + 2; i++)
-            {
-                Boolean boolean = false;
-                Thread thread = new Thread(() => boolean = runGetGroupList(i));
-                threadList.Add(thread);
-                thread.IsBackground = true;
-                thread.Start();
-                Thread.Sleep(5000);
-            }
 
             while (true)
             {
                 Thread.Sleep(100);
-                if(Program.checkGroup >= groupCount)
+                if(Program.checkGroupList.Count >= groupCount)
                 {
                     break;
+                }
+                else
+                {
+                    for (int i = 2; i < groupCount + 2; i++)
+                    {
+                        if (Program.checkGroupList.Contains(i)) continue;
+                        Thread thread = new Thread(() => runGetGroupList(i));
+                        threadList.Add(thread);
+                        thread.IsBackground = true;
+                        thread.Start();
+                        Thread.Sleep(5000);
+                    }
                 }
             }
 

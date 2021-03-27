@@ -21,7 +21,7 @@ namespace AutoPlayLecture
         public static Form2 form2;
         public static Form3 form3;
         public static String error = "";
-        public static int checkGroup = 0;
+        public static ArrayList checkGroupList = new ArrayList();
         public static String id = "";
         public static String pass = "";
         public static IWebDriver driver;

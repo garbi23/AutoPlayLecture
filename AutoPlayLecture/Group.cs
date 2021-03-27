@@ -41,10 +41,12 @@ namespace AutoPlayLecture
 
         private void Login()
         {
+            Thread.Sleep(1000);
             var id = driver.FindElement(By.Id("id"));
             id.SendKeys(Program.id);
             var pass = driver.FindElement(By.Id("passwd"));
             pass.SendKeys(Program.pass);
+            Thread.Sleep(1000);
             driver.FindElement(By.XPath("/html/body/center/div[1]/div[2]/div[2]/form/table/tbody/tr[1]/td[2]/input")).Click();
         }
 
@@ -92,7 +94,7 @@ namespace AutoPlayLecture
                 }
                 form.logAdd(name + " | 강의 그룹 추가 완료");
                 form.logAdd("-----------------------------");
-                Program.checkGroup++;
+                Program.checkGroupList.Add(groupId);
                 return true;
             }
             catch (Exception)
@@ -131,6 +133,7 @@ namespace AutoPlayLecture
             }
             catch (Exception)
             {
+                driver.Quit();
                 return;
             }
         }
