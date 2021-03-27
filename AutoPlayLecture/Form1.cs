@@ -254,22 +254,54 @@ namespace AutoPlayLecture
 
         private void getGroupList()
         {
-            logAdd("강의 그룹 가져오기");
-            var index = 2;
-            while (true)
+            var groupCount = 0;
+            for(int i = 2; i < 100; i++)
             {
-                Boolean boolean = false;
-                Thread thread = new Thread(() => boolean = runGetGroupList(index));
-                threadList.Add(thread);
-                thread.IsBackground = true;
-                thread.Start();
-                Thread.Sleep(8000);
-                if (!boolean)
+                var grouptd = 0;
+                var grouptr = 0;
+                if (i % 4 == 0)
+                {
+                    grouptd = 4;
+                    grouptr = i / 4;
+                }
+                else
+                {
+                    grouptd = i % 4;
+                    grouptr = i / 4 + 1;
+                }
+                try
+                {
+                    var name = driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[4]/div/div/form/table/tbody/tr[" + grouptr.ToString() + "]/td[" + grouptd.ToString() + "]/div/table/tbody/tr/td[2]/div[2]/a/div[1]/b")).Text;
+                    groupCount++;
+                }
+                catch (Exception)
                 {
                     break;
                 }
-                index++;
+                
             }
+            Console.WriteLine(groupCount.ToString());
+
+            logAdd("강의 그룹 가져오기");
+            for (int i = 2; i < groupCount + 2; i++)
+            {
+                Boolean boolean = false;
+                Thread thread = new Thread(() => boolean = runGetGroupList(i));
+                threadList.Add(thread);
+                thread.IsBackground = true;
+                thread.Start();
+                Thread.Sleep(5000);
+            }
+
+            while (true)
+            {
+                Thread.Sleep(100);
+                if(Program.checkGroup >= groupCount)
+                {
+                    break;
+                }
+            }
+
             groupSize = groupList.Count;
             logAdd("그룹의 개수 : " + groupSize);
             logAdd("그룹의 강의 가져오기 시작");
@@ -389,6 +421,7 @@ namespace AutoPlayLecture
             }
             else
             {
+                Console.WriteLine("불가");
                 return false;
             }
         }

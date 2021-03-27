@@ -19,6 +19,7 @@ namespace AutoPlayLecture
         public int groupId = 0;
         private Form1 form = null;
         public String name = "";
+        private ArrayList viewLectList = new ArrayList();
         public IWebDriver driver;
         private int listpage = 1;
         private IJavaScriptExecutor js = null;
@@ -65,20 +66,42 @@ namespace AutoPlayLecture
                     grouptd = groupId % 4;
                     grouptr = groupId / 4 + 1;
                 }
-                Console.WriteLine(groupId.ToString());
-                Console.WriteLine(grouptd.ToString());
-                Console.WriteLine(grouptr.ToString());
                 name = driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[4]/div/div/form/table/tbody/tr[" + grouptr.ToString() + "]/td[" + grouptd.ToString() + "]/div/table/tbody/tr/td[2]/div[2]/a/div[1]/b")).Text;
                 driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[4]/div/div/form/table/tbody/tr[" + grouptr.ToString() + "]/td[" + grouptd.ToString() + "]/div/table/tbody/tr/td[2]/div[1]")).Click();
+                Thread.Sleep(3000);
+                driver.Url = "https://ieilms.jbnu.ac.kr/attend/videoDataViewAttendListStudent.jsp";
+                Console.WriteLine("클릭 완료");
+                Thread.Sleep(10000);
+                for (int i = 1; i <= 100; i++)
+                {
+                    var check = "";
+                    try
+                    {
+                        check = driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[7]/table/tbody/tr[" + i + "]/td[6]/b")).Text;
+                        if (check == "결석")
+                        {
+                            var name = driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[7]/table/tbody/tr[" + i + "]/td[2]")).Text;
+                            Console.WriteLine(name);
+                            viewLectList.Add(name);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
                 form.logAdd(name + " | 강의 그룹 추가 완료");
                 form.logAdd("-----------------------------");
+                Program.checkGroup++;
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
         }
+
+
 
         public void setGroupPageForLecture(IWebDriver driver)
         {
@@ -115,7 +138,8 @@ namespace AutoPlayLecture
 
         public void setLectureList()
         {
-            Thread.Sleep(2000);
+            driver.Url = "https://ieilms.jbnu.ac.kr/mypage/group/groupPage.jsp";
+            Thread.Sleep(3000);
             driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[5]/div[1]/table/thead/tr/th[2]/a/img")).Click();
             Thread.Sleep(2000);
             while (true)
@@ -131,11 +155,6 @@ namespace AutoPlayLecture
                 form.logAdd("강의 리스트 "+ listpage + " 실행");
                 for (int i = 1; i < 11; i++)
                 {
-                    if (Program.endLecList.Contains(groupId + " " + listpage + " " + i))
-                    {
-                        Console.WriteLine(groupId + " " + listpage + " " + i + " 이미 다 들은 강의");
-                        continue;
-                    }
                     var tr = "";
                     try
                     {
@@ -148,19 +167,15 @@ namespace AutoPlayLecture
                     var name = tr.Split(' ')[0];
                     if (!name.Contains("mp4")) continue;
                     var lecture = new Lecture(i, driver);
-                    if (lecture.getLectureStat())
-                    {
-                        Console.WriteLine(groupId + " " + listpage + " " + i + " 이미 다 들은 강의 추가");
-                        Program.endLecList.Add(groupId + " " + listpage + " " + i);
-                        continue;
-                    }
+                    if (!viewLectList.Contains(name)) continue;
                     lecture.lecturepage = listpage;
+                    lecture.name = name;
                     lectureList.Add(lecture);
                     form.logAdd(name + " | 강의 추가 완료");
                 }
                 listpage++;
                 js.ExecuteScript("javascript:data_load(0," + listpage + ",2,'reg_dt','desc');");
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
             }
             form.logAdd(name + " | 강의 그룹 모든 강의 추가 완료!");
             form.groupSize--;
