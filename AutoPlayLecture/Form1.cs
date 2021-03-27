@@ -293,7 +293,7 @@ namespace AutoPlayLecture
             foreach (ListViewItem item in checkList)
             {
                 selitem = new ListViewItem(index.ToString());
-                selitem.SubItems.Add(item.SubItems[1]);
+                selitem.SubItems.Add(item.SubItems[2]);
                 listView2.Items.Add(selitem);
                 index++;
             }
@@ -410,8 +410,8 @@ namespace AutoPlayLecture
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        { 
-            
+        {
+            label1.Text = "종료 하는중...";
             foreach (Thread thread in threadList)
             {
                 
@@ -426,7 +426,6 @@ namespace AutoPlayLecture
 
         private void quitDriver()
         {
-            label1.Text = "종료 하는중...";
             progressBar3.Maximum = Program.driverList.Count;
             progressBar3.Minimum = 0;
             int value = 0;
@@ -442,11 +441,12 @@ namespace AutoPlayLecture
             Application.Exit();
         }
 
-
         private void button2_Click(object sender, EventArgs e)
         {
-            if (!isListening) return;
             initAll();
+            label1.Text = "강의를 선택해주세요!";
+            label2.Text = "이 곳에서 강의 진행상태가 표시 됩니다!";
+            updateSelectListView();
         }
     }
 }

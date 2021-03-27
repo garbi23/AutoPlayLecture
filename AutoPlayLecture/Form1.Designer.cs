@@ -74,7 +74,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(1165, 16);
             this.label1.TabIndex = 13;
-            this.label1.Text = "label1";
+            this.label1.Text = "강의를 선택해주세요!";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label2
@@ -84,7 +84,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(1165, 21);
             this.label2.TabIndex = 14;
-            this.label2.Text = "label2";
+            this.label2.Text = "이 곳에서 강의 진행상태가 표시 됩니다!";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // fileSystemWatcher1
@@ -148,6 +148,7 @@
             this.button2.TabIndex = 17;
             this.button2.Text = "강의 듣기 취소";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // listView2
             // 
