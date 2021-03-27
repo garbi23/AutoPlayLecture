@@ -11,6 +11,7 @@ namespace AutoPlayLecture
     class Lecture
     {
         private int lectureId = 0;
+        public int lecturepage = 0;
         public String name = "";
         public int maxProcessValue = 1;
         public int processValue = 0;

@@ -22,6 +22,7 @@ namespace AutoPlayLecture
     public partial class Form1 : Form
     {
         private string ieilmsurl = "https://ieilms.jbnu.ac.kr/";
+        private DateTime startTime;
         private int page = 0;
         public int groupSize = 0;
         private bool idpw = true;
@@ -30,6 +31,7 @@ namespace AutoPlayLecture
         private IWebDriver driver;
         private ArrayList checkList = new ArrayList();
         private Thread playThread;
+        private ArrayList threadList = new ArrayList();
         private Dictionary<int, ArrayList> checkDic = new Dictionary<int, ArrayList>();
 
         public Form1()
@@ -61,12 +63,14 @@ namespace AutoPlayLecture
         private void Form1_Load(object sender, EventArgs e)
         {
             logAdd("크롬 드라이버 설정...");
+            startTime = System.DateTime.Now;
             var options = new ChromeOptions();
             options.AddArguments("headless", "mute-audio");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             Program.value += 10;
             driver = new ChromeDriver(service, options);
+            Program.driverList.Add(driver);
             driver.Url = ieilmsurl;
             Program.driver = driver;
             Program.value += 20;
@@ -83,7 +87,15 @@ namespace AutoPlayLecture
                 return;
             }
             Thread thread = new Thread(() => getGroupList());
+            threadList.Add(thread);
+            thread.IsBackground = true;
             thread.Start();
+
+            listView2.FullRowSelect = true;
+            ImageList imageList = new ImageList();
+            imageList.ImageSize = new System.Drawing.Size(1, 30);
+            listView2.SmallImageList = imageList;
+            listView2.HideSelection = false;
         }
 
 
@@ -140,16 +152,17 @@ namespace AutoPlayLecture
             }
 
             var keylist = checkDic.Keys.ToList();
-            keylist.Sort();
             foreach (int key in keylist)
             {
-                checkDic[key].Sort();
                 Group group = (Group)groupList[key];
                 group.setGroupPageForLecture(driver);
                 Thread.Sleep(2000);
                 foreach (int index in checkDic[key])
                 {
                     var lec = (Lecture)group.lectureList[index];
+                    IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                    js.ExecuteScript("javascript:data_load(0," + lec.lecturepage + ",2,'reg_dt','desc');");
+                    Thread.Sleep(2000);
                     logAdd(lec.name + ": 강의 시작");
                     while (true)
                     {
@@ -235,6 +248,8 @@ namespace AutoPlayLecture
             {
                 Boolean boolean = false;
                 Thread thread = new Thread(() => boolean = runGetGroupList(index));
+                threadList.Add(thread);
+                thread.IsBackground = true;
                 thread.Start();
                 Thread.Sleep(8000);
                 if (!boolean)
@@ -249,9 +264,32 @@ namespace AutoPlayLecture
             foreach (Group group in groupList)
             {
                 Thread thread = new Thread(() => group.setLectureList());
+                threadList.Add(thread);
+                thread.IsBackground = true;
                 thread.Start();
             }
         }
+
+        private void updateSelectListView()
+        {
+
+            listView2.BeginUpdate();
+
+            ListViewItem selitem;
+            int index = 1;
+            listView2.Items.Clear();
+            foreach (ListViewItem item in checkList)
+            {
+                selitem = new ListViewItem(index.ToString());
+                selitem.SubItems.Add(item.SubItems[1]);
+                listView2.Items.Add(selitem);
+                index++;
+            }
+            listView2.EndUpdate();
+
+        }
+
+
 
         public void setListView()
         {
@@ -316,6 +354,7 @@ namespace AutoPlayLecture
                     item.BackColor = Color.GreenYellow;
                     checkList.Add(item);
                 }
+                updateSelectListView();
             }
         }
 
@@ -343,22 +382,32 @@ namespace AutoPlayLecture
             if (isListening) return;
             if (checkList.Count < 1) return;
             playThread = new Thread(() => playLecture());
+            threadList.Add(playThread);
+            playThread.IsBackground = true;
             playThread.Start();
             isListening = true;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (idpw)
+        { 
+            
+            foreach (Thread thread in threadList)
             {
-                driver.Quit();
-                Application.ExitThread();
-                Environment.Exit(0);
+                
+                if (thread.IsAlive)
+                {
+                    Console.WriteLine("쓰레드 종료");
+                    thread.Abort();
+                }
             }
-            else
+            foreach (IWebDriver driver in Program.driverList)
             {
+                Console.WriteLine("드라이버 종료");
                 driver.Quit();
             }
+            Process.GetCurrentProcess().Kill();
+            Application.Exit();
+
         }
 
         private void button2_Click(object sender, EventArgs e)

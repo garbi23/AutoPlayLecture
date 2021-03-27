@@ -24,6 +24,7 @@ namespace AutoPlayLecture
         public static String id = "";
         public static String pass = "";
         public static IWebDriver driver;
+        public static ArrayList driverList = new ArrayList();
         public static String ieilmsurl = "https://ieilms.jbnu.ac.kr/";
 
         public static void invokeThreadPlay(Form form, Action action)

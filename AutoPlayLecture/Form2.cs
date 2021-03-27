@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -41,11 +42,14 @@ namespace AutoPlayLecture
         private void setProgress(object sender, EventArgs e)
         {
             Console.WriteLine(Program.value);
+            if (Program.value > 100) { return; }
             progressBar1.Value = Program.value;
             label3.Text = (Double)progressBar1.Value + "%";
             if (Program.value == 100)
             {
-                this.Close();
+                timer1.Stop();
+                this.Opacity = 0;
+                this.ShowInTaskbar = false;
             }
         }
 
@@ -54,21 +58,7 @@ namespace AutoPlayLecture
 
         }
 
-        private void invokeThreadPlay(Form form, Action action)
-        {
-            if (form.InvokeRequired)
-            {
-                form.Invoke(new MethodInvoker(delegate ()
-                {
-                    action();
 
-                }));
-            }
-            else
-            {
-                action();
-            }
-        }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {

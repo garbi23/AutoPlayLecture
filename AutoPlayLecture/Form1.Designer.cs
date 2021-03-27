@@ -44,6 +44,9 @@
             this.LectureName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Progress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button2 = new System.Windows.Forms.Button();
+            this.listView2 = new System.Windows.Forms.ListView();
+            this.selNo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.selName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -146,11 +149,36 @@
             this.button2.Text = "강의 듣기 취소";
             this.button2.UseVisualStyleBackColor = true;
             // 
+            // listView2
+            // 
+            this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.selNo,
+            this.selName});
+            this.listView2.GridLines = true;
+            this.listView2.HideSelection = false;
+            this.listView2.Location = new System.Drawing.Point(1183, 12);
+            this.listView2.Name = "listView2";
+            this.listView2.Size = new System.Drawing.Size(254, 714);
+            this.listView2.TabIndex = 18;
+            this.listView2.UseCompatibleStateImageBehavior = false;
+            this.listView2.View = System.Windows.Forms.View.Details;
+            // 
+            // selNo
+            // 
+            this.selNo.Text = "No";
+            this.selNo.Width = 77;
+            // 
+            // selName
+            // 
+            this.selName.Text = "Name";
+            this.selName.Width = 173;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1184, 738);
+            this.ClientSize = new System.Drawing.Size(1449, 738);
+            this.Controls.Add(this.listView2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.textBox1);
@@ -185,6 +213,9 @@
         private System.Windows.Forms.ColumnHeader LectureName;
         private System.Windows.Forms.ColumnHeader Progress;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ListView listView2;
+        private System.Windows.Forms.ColumnHeader selNo;
+        private System.Windows.Forms.ColumnHeader selName;
     }
 }
 

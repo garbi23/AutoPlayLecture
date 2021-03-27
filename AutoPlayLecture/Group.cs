@@ -17,7 +17,7 @@ namespace AutoPlayLecture
         private int groupId = 0;
         private Form1 form = null;
         public String name = "";
-        private IWebDriver driver;
+        public IWebDriver driver;
         private int listpage = 1;
         private IJavaScriptExecutor js = null;
         public Group(int groupId, Form1 form)
@@ -30,6 +30,7 @@ namespace AutoPlayLecture
             service.HideCommandPromptWindow = true;
             Program.value += 10;
             driver = new ChromeDriver(service, options);
+            Program.driverList.Add(driver);
             driver.Url = Program.ieilmsurl;
             js = (IJavaScriptExecutor)driver;
             Login();
@@ -141,6 +142,7 @@ namespace AutoPlayLecture
                     if (!name.Contains("mp4")) continue;
                     var lecture = new Lecture(i, driver);
                     if (lecture.getLectureStat()) continue;
+                    lecture.lecturepage = listpage;
                     lectureList.Add(lecture);
                     form.logAdd(name + " | 강의 추가 완료");
                 }
