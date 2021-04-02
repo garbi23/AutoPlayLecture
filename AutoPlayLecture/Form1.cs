@@ -65,7 +65,7 @@ namespace AutoPlayLecture
             logAdd("크롬 드라이버 설정...");
             startTime = System.DateTime.Now;
             var options = new ChromeOptions();
-            options.AddArguments("headless", "mute-audio");
+            options.AddArguments("mute-audio");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             Program.value += 10;
@@ -210,9 +210,11 @@ namespace AutoPlayLecture
             try
             {
                 driver.FindElement(By.XPath("/html/body/center/div[1]/div[4]/div/div[2]/div/div[4]/div/div/form/table/tbody/tr[1]/td[2]/div/table/tbody/tr/td[2]/div[2]/a/div[1]/b"));
+                Console.WriteLine("로그인성공");
             }
             catch (Exception)
             {
+                Console.WriteLine("로그인실패");
                 String path = Application.StartupPath + @"\lecture\login.txt";
                 File.Delete(path);
                 invokeThreadPlay(Program.form2, Program.form2.thread.Interrupt);

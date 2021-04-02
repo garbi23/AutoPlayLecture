@@ -170,7 +170,8 @@ namespace AutoPlayLecture
                     var name = tr.Split(' ')[0];
                     if (!name.Contains("mp4")) continue;
                     var lecture = new Lecture(i, driver);
-                    if (!viewLectList.Contains(name)) continue;
+                    Console.WriteLine(name.Split('.')[0].Replace('_', ' ') + ": 제목!!");
+                    if (!viewLectList.Contains(name.Split('.')[0].Replace('_', ' '))) continue;
                     lecture.lecturepage = listpage;
                     lecture.name = name;
                     lectureList.Add(lecture);

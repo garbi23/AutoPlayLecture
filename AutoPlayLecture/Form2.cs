@@ -36,7 +36,7 @@ namespace AutoPlayLecture
         private void run()
         {
             form1 = new Form1();
-            try { form1.ShowDialog(); } catch (Exception) { return; }
+            try { form1.Show(); } catch (Exception) { return; }
         }
 
         private void setProgress(object sender, EventArgs e)
@@ -57,8 +57,6 @@ namespace AutoPlayLecture
         {
 
         }
-
-
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
