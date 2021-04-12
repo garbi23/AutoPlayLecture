@@ -99,7 +99,49 @@ namespace AutoPlayLecture
         }
 
 
-/*        class threadPlayLecture
+        /*        class threadPlayLecture
+                {
+                    public threadPlayLecture(Form1 form)
+                    {
+                        form.Invoke(new MethodInvoker(delegate ()
+                        {
+                            foreach (ListViewItem item in form.checkList)
+                            {
+                                int grouid = int.Parse(item.SubItems[0].Text.Split(' ')[0]);
+                                int lectureid = int.Parse(item.SubItems[0].Text.Split(' ')[1]);
+                                if (!form.checkDic.Keys.Contains(grouid)) { form.checkDic[grouid] = new ArrayList(); }
+                                form.checkDic[grouid].Add(lectureid);
+                            }
+
+                            foreach (int key in form.checkDic.Keys)
+                            {
+                                Group group = (Group)form.groupList[key];
+                                group.setGroupPageForLecture(form.driver);
+                                Thread.Sleep(2000);
+                                foreach (int index in form.checkDic[key])
+                                {
+                                    var lec = (Lecture)group.lectureList[index];
+                                    form.logAdd(lec.name + ": 강의 시작");
+                                    while (true)
+                                    {
+                                        if (lec.playLecture(form.driver)) { break; }
+                                        form.progressBar3.Maximum = lec.maxProcessValue;
+                                        form.progressBar3.Value = lec.processValue;
+                                        form.label1.Text = lec.name;
+                                        form.label2.Text = lec.processInfo;
+                                        Thread.Sleep(1000);
+                                    }
+                                    Thread.Sleep(2000);
+                                }
+                                form.driver.FindElement(By.XPath("/html/body/center/div[1]/div[3]/div/ul[1]/li[1]")).Click();
+                                Thread.Sleep(2000);
+                            }
+                        }));
+                    }
+                }*/
+
+
+        /*        class threadPlayLecture
         {
             public threadPlayLecture(Form1 form)
             {
@@ -139,7 +181,6 @@ namespace AutoPlayLecture
                 }));
             }
         }*/
-
 
         private void playLecture()
         {
